@@ -23,6 +23,7 @@ const addEmployee = async(req, res) => {
 const getAllEmployee = async(req, res) => {
     try {
         const user = await Employee.find();
+        // const user = await Employee.find({salary: {$gte: 30000}});
         res.status(201).json({
             status: 'success',
             data: user,
