@@ -60,4 +60,66 @@ const getEmployee = async (req, res) => {
     }
 }   
 
-module.exports = {addEmployee, getAllEmployee, getEmployee};
+const updateEmployee = async (req, res) => {
+    try {
+        const { email, ...updates } = req.body;
+        if (!email){
+            return res.status(400).json({
+                status: 'fail',
+                message: 'Email is required',
+            });
+        }
+
+        const updatedEmployee = await Employee.findOneAndUpdate(
+            { email },
+            updates,   
+        )
+
+        if (!updatedEmployee) {
+            return res.status(404).json({
+                status: 'fail',
+                message: 'Employee not found',
+            });
+        }
+        res.status(200).json({
+            status: 'success',
+            data: updatedEmployee,
+        });
+    } catch(err){
+        res.status(400).json({
+            status: 'fail',
+            message: `Failed to update the employee...`,
+        });
+    }
+}
+
+const deleteEmployee = async(req, res) => {
+    try{
+        const { email } = req.body;
+
+        if (!email){
+            return res.status(400).json({
+                status: 'fail',
+                message: 'Email is required',
+            });
+        }
+        const deletedEmployee = await Employee.findOneAndDelete({ email });
+
+        if (!deletedEmployee) {
+            return res.status(404).json({
+                status: 'fail',
+                message: 'Employee not found',
+            });
+        }
+        res.json({
+            message: "User deleted successfully", deletedEmployee
+        });
+    } catch(err) {
+        res.status(400).json({
+            status: 'fail',
+            message: `Failed to delete the employee...`,
+        });
+    }
+}
+
+module.exports = {addEmployee, getAllEmployee, getEmployee, updateEmployee, deleteEmployee};
