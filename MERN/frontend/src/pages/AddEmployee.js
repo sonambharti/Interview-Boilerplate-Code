@@ -1,10 +1,7 @@
 import React, { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAddEmployee } from "../hooks/useAddEmployee";
 import Alert from "../components/Alert";
-
-
-
 
 function AddEmployee() {
   const [formData, setFormData] = useState({
@@ -17,7 +14,11 @@ function AddEmployee() {
   });
   const { addEmployee, isLoading: isAdding, error, success } = useAddEmployee();
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: name === "salary" ? Number(value) : value }));
   };
 
   const handleSubmit = async (e) => {
@@ -62,10 +63,14 @@ function AddEmployee() {
       </form>
 
       <div className="center flex gap-4">
-        <button onClick={() => <Navigate to="/get-all" />} className="bg-green-600 text-white px-4 py-2 rounded">Get All</button>
-        <button onClick={() => <Navigate to="/get-employee" />} className="bg-indigo-600 text-white px-4 py-2 rounded">Get by Email</button>
-        <button onClick={() => <Navigate to="/update" />} className="bg-yellow-500 text-white px-4 py-2 rounded">Update</button>
-        <button onClick={() => <Navigate to="/delete" />} className="bg-red-600 text-white px-4 py-2 rounded">Delete</button>
+        <button onClick={() => {
+            navigate("/get-all");
+          }} className="bg-green-600 text-white px-4 py-2 rounded">Get All</button>
+        <button onClick={() => navigate("/get-employee")} className="bg-indigo-600 text-white px-4 py-2 rounded">Get by Email</button>
+        <button onClick={() => navigate("/update-employee")} className="bg-yellow-500 text-white px-4 py-2 rounded">Update</button>
+        <button onClick={() => {
+            navigate("/delete");
+          }} className="bg-red-600 text-white px-4 py-2 rounded">Delete</button>
       </div>
     </div>
   );

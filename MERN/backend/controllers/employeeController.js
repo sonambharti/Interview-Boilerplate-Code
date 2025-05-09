@@ -16,7 +16,6 @@ const addEmployee = async(req, res) => {
             message: err.message
         });
     }
-
 }
 
 

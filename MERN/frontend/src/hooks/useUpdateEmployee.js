@@ -1,22 +1,48 @@
-const BACKEND_BASE_URI = process.env.REACT_APP_BACKEND_BASE_URI || "http://localhost:5000";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+const BACKEND_BASE_URI = process.env.REACT_APP_BACKEND_BASE_URI;
 
 export const useUpdateEmployee = () => {
+  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
   const updateEmployee = async (formData) => {
+    setIsLoading(true);
+    setError(null);
+    setSuccess(null);
     try {
-      const res = await fetch(`${BACKEND_BASE_URI}/employee/${formData.email}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+        const response = await fetch(
+        `${BACKEND_BASE_URI}/api/employee/update`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(formData),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to update");
+      const data = await response.json();
 
-      return { success: true, data };
+      if (!response.ok) {
+        setError(data.message);
+      } else {
+        setIsLoading(false);
+        setError(null);
+        setSuccess('Employee Updated Successfully 🎉.');
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
+      }
     } catch (err) {
-      return { success: false, error: err.message };
+        setError(err.message);
+    } finally {
+      setIsLoading(false);
+      
     }
   };
 
-  return { updateEmployee };
+  return { updateEmployee, isLoading, error, success};
 };
